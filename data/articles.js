@@ -766,7 +766,7 @@ AI相关法规更新频繁，建议建立：
 *陈思杰律师，浙江律凡律师事务所AI+法律部负责人。深耕领域为AI Agent的开发过程与独角兽企业商业模式中的法务需求。如需专业法律服务，欢迎联系：15990034784。*`
     }
 ];
-
+window.ARTICLES = ARTICLES;
 // 导出文章数据
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ARTICLES;
