@@ -122,7 +122,9 @@ function renderArticle(articleId) {
     }
 
     const dateFormatted = formatDate(article.date);
-    const renderedContent = marked.parse(article.content);
+    const renderedContent = DOMPurify.sanitize(marked.parse(article.content), {
+        USE_PROFILES: { html: true }
+    });
 
     const html = `
         <div class="article-detail">
