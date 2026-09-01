@@ -247,7 +247,7 @@ function renderArticlesByTag(tag) {
                 &larr; 返回标签列表
             </a>
             <div class="section-title">
-                <span>标签：「${safetag}」</span>
+                <span>标签：「${safeTag}」</span>
                 <span class="count">${filtered.length} 篇文章</span>
             </div>
     `;
