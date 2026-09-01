@@ -75,7 +75,7 @@ function renderHome() {
     let html = `
         <div class="hero">
             <h1>陈思杰律师</h1>
-            <p>专注劳动法、知识产权与AI法律前沿，以专业视角解读法律实务</p>
+            <p>专注劳动争议、知识产权与人工智能法律前沿，以专业视角解读法律实务</p>
             <div class="hero-tags">
                 <span>劳动法</span>
                 <span>知识产权</span>
