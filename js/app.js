@@ -12,6 +12,17 @@ marked.setOptions({
 });
 
 // ===== 路由系统 =====
+// 将外部输入转换为安全的 HTML 文本，防止 XSS
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
+}
+
 function navigate(path) {
     window.location.hash = '#' + path;
     // 关闭移动端菜单
@@ -228,14 +239,15 @@ function renderTags() {
 function renderArticlesByTag(tag) {
     const app = document.getElementById('app');
     const filtered = ARTICLES.filter(article => article.tags.includes(tag));
-
+    const safeTag = escapeHtml(tag);
+    
     let html = `
         <div class="tags-page">
             <a href="#/tags" class="back-link" onclick="navigate('/tags')">
                 &larr; 返回标签列表
             </a>
             <div class="section-title">
-                <span>标签：「${tag}」</span>
+                <span>标签：「${safetag}」</span>
                 <span class="count">${filtered.length} 篇文章</span>
             </div>
     `;
