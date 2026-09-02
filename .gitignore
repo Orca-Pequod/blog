@@ -1,0 +1,9 @@
+# 本地工具脚本（不进入线上仓库）
+scripts/
+
+# 临时/中间文件
+*.remote
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
