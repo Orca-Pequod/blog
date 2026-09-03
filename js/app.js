@@ -51,6 +51,8 @@ function handleRoute() {
     // 路由匹配
     if (route === '/' || route === '') {
         renderHome();
+    } else if (route === '/practice') {
+        renderPractice();
     } else if (route === '/tags') {
         renderTags();
     } else if (route === '/about') {
@@ -73,6 +75,7 @@ function updateNavActive(route) {
         link.classList.remove('active');
         const href = link.getAttribute('href').replace('#', '');
         if (route === '/' && href === '/') link.classList.add('active');
+        else if (route.startsWith('/practice') && href === '/practice') link.classList.add('active');
         else if (route.startsWith('/tags') && href === '/tags') link.classList.add('active');
         else if (route.startsWith('/about') && href === '/about') link.classList.add('active');
     });
@@ -92,6 +95,32 @@ function renderHome() {
                 <span>知识产权</span>
                 <span>AI合规</span>
                 <span>独角兽企业法务</span>
+            </div>
+        </div>
+        <div class="section-title">
+            <span>专业领域</span>
+            <a href="#/practice" class="view-all" onclick="navigate('/practice')">查看全部 &rarr;</a>
+        </div>
+        <div class="category-grid">
+            <div class="category-card" onclick="navigate('/practice')">
+                <div class="category-icon">&#9878;</div>
+                <h3>劳动争议</h3>
+                <p>劳动人事争议仲裁诉讼、竞业限制攻防、企业用工合规</p>
+            </div>
+            <div class="category-card" onclick="navigate('/practice')">
+                <div class="category-icon">&#128737;</div>
+                <h3>知识产权</h3>
+                <p>商标侵权、著作权纠纷、商业秘密保护、不正当竞争</p>
+            </div>
+            <div class="category-card" onclick="navigate('/practice')">
+                <div class="category-icon">&#129302;</div>
+                <h3>人工智能法律</h3>
+                <p>AI Agent 开发合规、数据合规、生成式 AI 风控</p>
+            </div>
+            <div class="category-card" onclick="navigate('/practice')">
+                <div class="category-icon">&#127970;</div>
+                <h3>公司治理</h3>
+                <p>融资合规、股权架构、企业常年法律顾问</p>
             </div>
         </div>
         <div class="section-title">
@@ -118,7 +147,19 @@ function renderHome() {
         `;
     });
 
-    html += '</div>';
+    html += `</div>
+
+        <div class="home-intro">
+            <div class="intro-text">
+                <h3>陈思杰 律师</h3>
+                <p>浙江律凡律师事务所 AI+法律部负责人，专注劳动争议、知识产权与人工智能法律，致力于为企业与个人提供具有前瞻性的法律解决方案。</p>
+                <div class="intro-actions">
+                    <a href="#/about" class="btn btn-primary" onclick="navigate('/about')">了解更多</a>
+                    <a href="#/practice" class="btn btn-outline" onclick="navigate('/practice')">服务范围</a>
+                </div>
+            </div>
+        </div>
+    `;
     app.innerHTML = html;
 }
 
@@ -281,6 +322,80 @@ function renderArticlesByTag(tag) {
     }
 
     html += '</div>';
+    app.innerHTML = html;
+}
+
+// ===== 页面：专业领域 =====
+function renderPractice() {
+    const app = document.getElementById('app');
+
+    const html = `
+        <div class="practice-page">
+            <div class="practice-hero">
+                <h1>专业领域</h1>
+                <p>聚焦劳动争议、知识产权与人工智能法律，提供从风险防范到争议解决的全程法律服务。</p>
+            </div>
+
+            <div class="practice-section">
+                <h2>&#9878; 劳动争议</h2>
+                <p class="practice-desc">深耕劳动人事争议领域，从仲裁到诉讼全流程代理，兼顾企业用工合规与劳动者权益保护。</p>
+                <ul class="practice-list">
+                    <li>劳动人事争议仲裁、诉讼代理</li>
+                    <li>竞业限制协议审查与违约追责</li>
+                    <li>劳动合同拟定、审查与解除合规</li>
+                    <li>企业规章制度与用工合规建设</li>
+                    <li>经济补偿金、赔偿金、加班费等争议处理</li>
+                    <li>工伤认定与社会保险争议处理</li>
+                </ul>
+            </div>
+
+            <div class="practice-section">
+                <h2>&#128737; 知识产权</h2>
+                <p class="practice-desc">专注商标、著作权、商业秘密与不正当竞争，为企业创新成果提供全链条保护。</p>
+                <ul class="practice-list">
+                    <li>商标侵权诉讼与维权</li>
+                    <li>著作权纠纷处理</li>
+                    <li>商业秘密保护体系搭建</li>
+                    <li>不正当竞争纠纷处理</li>
+                    <li>专利侵权的分析与应对</li>
+                </ul>
+            </div>
+
+            <div class="practice-section">
+                <h2>&#129302; 人工智能法律</h2>
+                <p class="practice-desc">聚焦 AI Agent 开发与生成式人工智能的法律风险，为 AI 企业提供前瞻性合规方案。</p>
+                <ul class="practice-list">
+                    <li>AI Agent 开发全流程合规</li>
+                    <li>数据合规与个人信息保护</li>
+                    <li>算法备案与安全评估</li>
+                    <li>生成式 AI 服务法律风险防控</li>
+                    <li>AI 商业秘密与知识产权保护</li>
+                </ul>
+            </div>
+
+            <div class="practice-section">
+                <h2>&#127970; 公司治理</h2>
+                <p class="practice-desc">服务独角兽企业及成长型企业，覆盖融资、股权、合同与常年法律顾问。</p>
+                <ul class="practice-list">
+                    <li>独角兽企业融资合规</li>
+                    <li>股权架构设计与激励</li>
+                    <li>企业常年法律顾问</li>
+                    <li>合同风控与合规审查</li>
+                    <li>员工竞业限制与保密体系建设</li>
+                </ul>
+            </div>
+
+            <div class="practice-cta">
+                <h3>需要法律服务？</h3>
+                <p>欢迎致电或邮件咨询，我将根据您的具体情况提供针对性建议。</p>
+                <div class="intro-actions">
+                    <a href="tel:15990034784" class="btn btn-primary">电话咨询：15990034784</a>
+                    <a href="mailto:1701397885@qq.com" class="btn btn-outline">发送邮件</a>
+                </div>
+            </div>
+        </div>
+    `;
+
     app.innerHTML = html;
 }
 
