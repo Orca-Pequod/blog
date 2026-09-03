@@ -122,22 +122,22 @@ function renderHome() {
             <a href="#/practice" class="view-all" onclick="navigate('/practice')">查看全部 &rarr;</a>
         </div>
         <div class="category-grid">
-            <div class="category-card" onclick="navigate('/practice')">
+            <div class="category-card" onclick="goPracticeSection('practice-labor')">
                 <div class="category-icon">${ICONS.labor}</div>
                 <h3>劳动争议</h3>
                 <p>劳动人事争议仲裁诉讼、竞业限制攻防、企业用工合规</p>
             </div>
-            <div class="category-card" onclick="navigate('/practice')">
+            <div class="category-card" onclick="goPracticeSection('practice-ip')">
                 <div class="category-icon">${ICONS.ip}</div>
                 <h3>知识产权</h3>
                 <p>商标侵权、著作权纠纷、商业秘密保护、不正当竞争</p>
             </div>
-            <div class="category-card" onclick="navigate('/practice')">
+            <div class="category-card" onclick="goPracticeSection('practice-ai')">
                 <div class="category-icon">${ICONS.ai}</div>
                 <h3>人工智能法律</h3>
                 <p>AI Agent 开发合规、数据合规、生成式 AI 风控</p>
             </div>
-            <div class="category-card" onclick="navigate('/practice')">
+            <div class="category-card" onclick="goPracticeSection('practice-corp')">
                 <div class="category-icon">${ICONS.corp}</div>
                 <h3>公司治理</h3>
                 <p>融资合规、股权架构、企业常年法律顾问</p>
