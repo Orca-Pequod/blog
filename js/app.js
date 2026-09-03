@@ -23,11 +23,31 @@ function escapeHtml(value) {
     })[char]);
 }
 
+// ===== 统一单色 SVG 图标 =====
+const ICONS = {
+    labor: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>',
+    ip: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5.9 1.2.9 1.9V16a1 1 0 0 0 1 1h3.2a1 1 0 0 0 1-1v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 3z"/></svg>',
+    ai: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>',
+    corp: '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9h4a2 2 0 0 1 2 2v10"/><path d="M8 7h2M8 11h2M8 15h2M11 7h1M11 11h1M11 15h1"/></svg>'
+};
+
 function navigate(path) {
     window.location.hash = '#' + path;
     // 关闭移动端菜单
     document.getElementById('navMenu').classList.remove('active');
     document.getElementById('navToggle').classList.remove('active');
+}
+
+// 跳转到专业领域页的指定板块（供页脚"专业领域"链接使用）
+function goPracticeSection(id) {
+    const onPractice = getRoute() === '/practice';
+    if (!onPractice) {
+        window.location.hash = '#/practice';
+    }
+    setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, onPractice ? 80 : 220);
 }
 
 function getRoute() {
@@ -103,22 +123,22 @@ function renderHome() {
         </div>
         <div class="category-grid">
             <div class="category-card" onclick="navigate('/practice')">
-                <div class="category-icon">&#9878;</div>
+                <div class="category-icon">${ICONS.labor}</div>
                 <h3>劳动争议</h3>
                 <p>劳动人事争议仲裁诉讼、竞业限制攻防、企业用工合规</p>
             </div>
             <div class="category-card" onclick="navigate('/practice')">
-                <div class="category-icon">&#128737;</div>
+                <div class="category-icon">${ICONS.ip}</div>
                 <h3>知识产权</h3>
                 <p>商标侵权、著作权纠纷、商业秘密保护、不正当竞争</p>
             </div>
             <div class="category-card" onclick="navigate('/practice')">
-                <div class="category-icon">&#129302;</div>
+                <div class="category-icon">${ICONS.ai}</div>
                 <h3>人工智能法律</h3>
                 <p>AI Agent 开发合规、数据合规、生成式 AI 风控</p>
             </div>
             <div class="category-card" onclick="navigate('/practice')">
-                <div class="category-icon">&#127970;</div>
+                <div class="category-icon">${ICONS.corp}</div>
                 <h3>公司治理</h3>
                 <p>融资合规、股权架构、企业常年法律顾问</p>
             </div>
@@ -336,8 +356,8 @@ function renderPractice() {
                 <p>聚焦劳动争议、知识产权与人工智能法律，提供从风险防范到争议解决的全程法律服务。</p>
             </div>
 
-            <div class="practice-section">
-                <h2>&#9878; 劳动争议</h2>
+            <div class="practice-section" id="practice-labor">
+                <h2>${ICONS.labor} 劳动争议</h2>
                 <p class="practice-desc">深耕劳动人事争议领域，从仲裁到诉讼全流程代理，兼顾企业用工合规与劳动者权益保护。</p>
                 <ul class="practice-list">
                     <li>劳动人事争议仲裁、诉讼代理</li>
@@ -349,8 +369,8 @@ function renderPractice() {
                 </ul>
             </div>
 
-            <div class="practice-section">
-                <h2>&#128737; 知识产权</h2>
+            <div class="practice-section" id="practice-ip">
+                <h2>${ICONS.ip} 知识产权</h2>
                 <p class="practice-desc">专注商标、著作权、商业秘密与不正当竞争，为企业创新成果提供全链条保护。</p>
                 <ul class="practice-list">
                     <li>商标侵权诉讼与维权</li>
@@ -361,8 +381,8 @@ function renderPractice() {
                 </ul>
             </div>
 
-            <div class="practice-section">
-                <h2>&#129302; 人工智能法律</h2>
+            <div class="practice-section" id="practice-ai">
+                <h2>${ICONS.ai} 人工智能法律</h2>
                 <p class="practice-desc">聚焦 AI Agent 开发与生成式人工智能的法律风险，为 AI 企业提供前瞻性合规方案。</p>
                 <ul class="practice-list">
                     <li>AI Agent 开发全流程合规</li>
@@ -373,8 +393,8 @@ function renderPractice() {
                 </ul>
             </div>
 
-            <div class="practice-section">
-                <h2>&#127970; 公司治理</h2>
+            <div class="practice-section" id="practice-corp">
+                <h2>${ICONS.corp} 公司治理</h2>
                 <p class="practice-desc">服务独角兽企业及成长型企业，覆盖融资、股权、合同与常年法律顾问。</p>
                 <ul class="practice-list">
                     <li>独角兽企业融资合规</li>
@@ -389,7 +409,7 @@ function renderPractice() {
                 <h3>需要法律服务？</h3>
                 <p>欢迎致电或邮件咨询，我将根据您的具体情况提供针对性建议。</p>
                 <div class="intro-actions">
-                    <a href="tel:15990034784" class="btn btn-primary">电话咨询：15990034784</a>
+                    <a href="tel:15990034784" class="btn btn-primary">电话咨询</a>
                     <a href="mailto:1701397885@qq.com" class="btn btn-outline">发送邮件</a>
                 </div>
             </div>
@@ -423,9 +443,9 @@ function renderAbout() {
             <div class="about-section">
                 <h2>社会职务</h2>
                 <ul>
-                    <li>浙江律凡律师事务所 AI+法律部负责人</li>
                     <li>拱墅区人民法院法律服务志愿者</li>
                     <li>杭州12355青少年服务台法律志愿者</li>
+                    <li>天水街道公共法律服务工作站值班律师</li>
                     <li>曾任拱墅区法律援助中心指派援助律师</li>
                 </ul>
             </div>
@@ -433,9 +453,9 @@ function renderAbout() {
             <div class="about-section">
                 <h2>专业领域</h2>
                 <ul>
-                    <li><strong>劳动法</strong>：劳动人事争议纠纷、竞业限制协议、劳动合同审查、企业用工合规</li>
+                    <li><strong>劳动争议</strong>：劳动人事争议纠纷、竞业限制协议、劳动合同审查、企业用工合规</li>
                     <li><strong>知识产权</strong>：商标侵权诉讼、著作权纠纷、商业秘密保护、不正当竞争</li>
-                    <li><strong>AI与法律</strong>：AI Agent 开发合规、数据合规、算法备案、生成式AI服务法律风险</li>
+                    <li><strong>人工智能法律</strong>：AI Agent 开发合规、数据合规、算法备案、生成式AI服务法律风险</li>
                     <li><strong>公司治理</strong>：独角兽企业融资合规、股权架构设计、企业法律顾问</li>
                 </ul>
             </div>
@@ -459,20 +479,11 @@ function renderAbout() {
             </div>
 
             <div class="about-contact">
-                <h2>联系方式</h2>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="label">联系电话</div>
-                        <div class="value">15990034784</div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="label">电子邮箱</div>
-                        <div class="value">1701397885@qq.com</div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="label">办公地址</div>
-                        <div class="value" style="font-size: 0.88rem;">杭州市拱墅区<br>湖州街168号美好国际大厦15A（14楼）02室</div>
-                    </div>
+                <h2>需要专业法律服务？</h2>
+                <p>欢迎致电或邮件咨询，我将根据您的具体情况提供针对性建议。</p>
+                <div class="intro-actions">
+                    <a href="tel:15990034784" class="btn btn-primary">电话咨询</a>
+                    <a href="mailto:1701397885@qq.com" class="btn btn-outline">发送邮件</a>
                 </div>
             </div>
         </div>
