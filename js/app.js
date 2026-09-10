@@ -406,7 +406,7 @@ function renderPractice() {
             </div>
 
             <div class="practice-cta">
-                <h3>需要法律服务？</h3>
+                <h3>需要专业法律服务？</h3>
                 <p>欢迎致电或邮件咨询，我将根据您的具体情况提供针对性建议。</p>
                 <div class="intro-actions">
                     <a href="tel:15990034784" class="btn btn-primary">电话咨询</a>

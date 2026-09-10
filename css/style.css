@@ -778,7 +778,9 @@ img {
     top: 2px;
 }
 
-.practice-cta {
+/* 通用 CTA 块（专业领域页 / 关于页底部联系模块共用） */
+.practice-cta,
+.about-contact {
     background: var(--navy);
     color: #fff;
     border-radius: var(--radius);
@@ -787,15 +789,20 @@ img {
     margin-top: 8px;
 }
 
-.practice-cta h3 {
+.practice-cta h3,
+.about-contact h2 {
     font-family: var(--font-serif);
     color: var(--gold-light);
-    font-size: 1.3rem;
+    font-size: 1.45rem;
+    font-weight: 600;
     margin-bottom: 8px;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
-.practice-cta p {
-    color: rgba(255, 255, 255, 0.75);
+.practice-cta p,
+.about-contact p {
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.92rem;
     margin-bottom: 20px;
 }
@@ -892,26 +899,7 @@ img {
     font-size: 0.8rem;
 }
 
-.about-contact {
-    background: var(--navy);
-    color: #fff;
-    border-radius: var(--radius);
-    padding: 32px 40px;
-    text-align: center;
-}
-
-.about-contact h2 {
-    color: var(--gold-light);
-    font-family: var(--font-serif);
-    margin-bottom: 20px;
-    border-bottom: none;
-}
-
-.about-contact p {
-    color: rgba(255,255,255,0.78);
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-}
+/* .about-contact 样式已合并到上方通用 .practice-cta/.about-contact 规则中 */
 
 /* ===== 加载动画 ===== */
 .loading {
