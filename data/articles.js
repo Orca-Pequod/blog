@@ -20,7 +20,7 @@ const ARTICLES = [
 
 ## 一、先看职务发明报酬如何安排
 
-现行[《专利法》](https://www.npc.gov.cn/npc/c2/c30834/202011/t20201119_308800.html)把“奖励”和“报酬”分开规定。单位取得职务发明专利权后，应当给予发明人奖励；专利真正投入实施后，还要根据推广应用范围和取得的经济效益，给予合理报酬。
+现行[《专利法》](https://www.cnipa.gov.cn/art/2020/11/23/art_97_155167.html)把“奖励”和“报酬”分开规定。单位取得职务发明专利权后，应当给予发明人奖励；专利真正投入实施后，还要根据推广应用范围和取得的经济效益，给予合理报酬。
 
 至于怎么给，[《专利法实施细则》](https://www.cnipa.gov.cn/art/2023/12/21/art_98_189197.html)先把空间留给了单位和发明人：双方可以约定，单位也可以在依法制定的规章制度中规定方式和数额。如果都没有，相关计算才会进入[《促进科技成果转化法》](https://www.most.gov.cn/xxgk/xinxifenlei/fdzdgknr/fgzc/flfg/201512/t20151204_122621.html)规定的路径。
 
@@ -53,7 +53,7 @@ const ARTICLES = [
 ## 资料来源
 
 - [最高人民法院知识产权法庭：发明人报酬纠纷中的举证责任分配及数额确定](https://ipc.court.gov.cn/zh-cn/news/view-6072.html)
-- [中华人民共和国专利法](https://www.npc.gov.cn/npc/c2/c30834/202011/t20201119_308800.html)
+- [中华人民共和国专利法（2020年修正）](https://www.cnipa.gov.cn/art/2020/11/23/art_97_155167.html)
 - [中华人民共和国专利法实施细则（2023年修订）](https://www.cnipa.gov.cn/art/2023/12/21/art_98_189197.html)
 - [中华人民共和国促进科技成果转化法（2015年修订）](https://www.most.gov.cn/xxgk/xinxifenlei/fdzdgknr/fgzc/flfg/201512/t20151204_122621.html)
 - [国家知识产权局：关于发明人奖励和报酬事宜](https://www.cnipa.gov.cn/jact/front/mailpubdetail.do?sysid=6&transactId=498065)
