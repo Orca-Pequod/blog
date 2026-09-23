@@ -1,0 +1,74 @@
+name: Repair static share pages
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    name: Repair share pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    # 只有这个任务获得代码写入权限。
+    # 因为本工作流只响应 master 的 push，所以不会在普通 PR 中运行。
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out trusted master
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Regenerate static share pages
+        run: node tools/build_share_pages.js
+
+      - name: Detect generated changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "$(git status --porcelain -- articles/)" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git status --short -- articles/
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "静态分享页无需修复。"
+          fi
+
+      - name: Push a repair branch
+        if: steps.changes.outputs.changed == 'true'
+        shell: bash
+        env:
+          BRANCH_NAME: auto/share-pages-${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git switch -c "$BRANCH_NAME"
+          git add -- articles/
+          git commit -m "chore: regenerate static share pages"
+          git push --set-upstream origin "$BRANCH_NAME"
+
+          COMPARE_URL="https://github.com/${GITHUB_REPOSITORY}/compare/master...${BRANCH_NAME}?expand=1"
+
+          {
+            echo "## 静态分享页需要同步"
+            echo
+            echo "GitHub Actions 已创建修复分支，但没有直接修改 master。"
+            echo
+            echo "[点击这里检查变化并创建 PR](${COMPARE_URL})"
+          } >> "$GITHUB_STEP_SUMMARY"
