@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const marked = require(path.join(__dirname, '..', 'js', 'marked.min.js'));
+const sanitizeHtml = require('sanitize-html');
 const ARTICLES = require(path.join(__dirname, '..', 'data', 'articles.js'));
 
 const BASE = path.resolve(__dirname, '..');
@@ -57,7 +58,18 @@ function formatDate(iso) {
 function buildPage(article) {
   const url = `${SITE}/articles/${article.id}.html`;
   const image = `${SITE}${COVER_IMAGE}`;
-  const body = marked.parse(article.content);
+  const rawBody = marked.parse(article.content);
+  const body = sanitizeHtml(rawBody, {
+    allowedTags: [
+      'p', 'br', 'h1', 'h2', 'h3', 'h4',
+      'blockquote', 'ul', 'ol', 'li',
+      'strong', 'em', 'code', 'pre', 'hr', 'a'
+    ],
+    allowedAttributes: {
+      a: ['href', 'title']
+    },
+    allowedSchemes: ['http', 'https', 'mailto', 'tel']
+  });
   const dateText = formatDate(article.date);
 
   const tagsHtml = (article.tags || [])
