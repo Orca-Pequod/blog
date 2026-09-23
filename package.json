@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:share-pages": "node tools/build_share_pages.js"
+    "build:share-pages": "node tools/build_share_pages.js",
+    "test": "node --test tools/build_share_pages.test.js"
   },
   "dependencies": {
     "sanitize-html": "2.17.7"

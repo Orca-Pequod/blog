@@ -44,7 +44,7 @@ function navigate(path) {
 function getShareUrl(articleId) {
     const base = window.location.origin +
         window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '');
-    return `${base}/articles/${articleId}.html`;
+    return `${base}/articles/${encodeURIComponent(articleId)}.html`;
 }
 
 // 展开/收起微信分享步骤说明
@@ -141,8 +141,12 @@ function handleRoute() {
     } else if (route === '/about') {
         renderAbout();
     } else if (route.startsWith('/article/')) {
-        const articleId = route.replace('/article/', '');
-        renderArticle(articleId);
+        try {
+            const articleId = decodeURIComponent(route.replace('/article/', ''));
+            renderArticle(articleId);
+        } catch (error) {
+            renderNotFound();
+        }
     } else if (route.startsWith('/tag/')) {
         const tag = decodeURIComponent(route.replace('/tag/', ''));
         renderArticlesByTag(tag);
@@ -216,7 +220,7 @@ function renderHome() {
     articles.forEach(article => {
         const dateFormatted = formatDate(article.date);
         html += `
-            <div class="article-card" onclick="navigate('/article/${article.id}')">
+            <div class="article-card" data-article-id="${escapeHtml(article.id)}" role="link" tabindex="0">
                 <div class="card-category">${article.category}</div>
                 <h2>${article.title}</h2>
                 <p class="card-summary">${article.summary}</p>
@@ -282,7 +286,7 @@ function renderArticle(articleId) {
             </div>
             <div class="share-bar">
                 <span class="share-label">分享本文</span>
-                <button type="button" class="btn-share" onclick="copyShareLink('${article.id}', this)">复制分享链接</button>
+                <button type="button" class="btn-share" data-article-id="${escapeHtml(article.id)}">复制分享链接</button>
                 <span class="share-hint">微信内直接从「收藏」转发才会显示图文卡片</span>
                 <button type="button" class="share-steps-toggle" onclick="toggleShareSteps(this)">查看步骤</button>
             </div>
@@ -356,7 +360,7 @@ function renderTags() {
     ARTICLES.forEach(article => {
         const dateFormatted = formatDate(article.date);
         html += `
-            <div class="article-card" onclick="navigate('/article/${article.id}')">
+            <div class="article-card" data-article-id="${escapeHtml(article.id)}" role="link" tabindex="0">
                 <div class="card-category">${article.category}</div>
                 <h2>${article.title}</h2>
                 <p class="card-summary">${article.summary}</p>
@@ -403,7 +407,7 @@ function renderArticlesByTag(tag) {
         filtered.forEach(article => {
             const dateFormatted = formatDate(article.date);
             html += `
-                <div class="article-card" onclick="navigate('/article/${article.id}')">
+                <div class="article-card" data-article-id="${escapeHtml(article.id)}" role="link" tabindex="0">
                     <div class="card-category">${article.category}</div>
                     <h2>${article.title}</h2>
                     <p class="card-summary">${article.summary}</p>
@@ -617,10 +621,39 @@ function setupScrollEffect() {
     });
 }
 
+// 文章 ID 只存放在 data 属性中，通过事件委托读取；不再拼入内联 JavaScript。
+function setupArticleInteractions() {
+    const app = document.getElementById('app');
+
+    app.addEventListener('click', event => {
+        const shareButton = event.target.closest('.btn-share[data-article-id]');
+        if (shareButton && app.contains(shareButton)) {
+            copyShareLink(shareButton.dataset.articleId, shareButton);
+            return;
+        }
+
+        const articleCard = event.target.closest('.article-card[data-article-id]');
+        if (articleCard && app.contains(articleCard)) {
+            navigate(`/article/${encodeURIComponent(articleCard.dataset.articleId)}`);
+        }
+    });
+
+    app.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+
+        const articleCard = event.target.closest('.article-card[data-article-id]');
+        if (!articleCard || !app.contains(articleCard)) return;
+
+        event.preventDefault();
+        navigate(`/article/${encodeURIComponent(articleCard.dataset.articleId)}`);
+    });
+}
+
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', () => {
     setupMobileMenu();
     setupScrollEffect();
+    setupArticleInteractions();
 
     // 监听路由变化
     window.addEventListener('hashchange', handleRoute);

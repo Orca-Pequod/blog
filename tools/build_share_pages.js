@@ -26,6 +26,8 @@ const ARTICLES = require(path.join(__dirname, '..', 'data', 'articles.js'));
 const BASE = path.resolve(__dirname, '..');
 const OUT_DIR = path.join(BASE, 'articles');
 const DEFAULT_SITE = 'https://orca-pequod.github.io/blog';
+const ARTICLE_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const MAX_ARTICLE_ID_LENGTH = 100;
 // 正方形封面：微信对话框/朋友圈缩略图均为 1:1 居中裁剪，方图可零损失显示
 const COVER_IMAGE = '/images/og-cover-square.png';
 
@@ -54,9 +56,54 @@ function formatDate(iso) {
   return `${m[1]}年${Number(m[2])}月${Number(m[3])}日`;
 }
 
+/**
+ * 文章 ID 会进入路由、URL 和输出文件名，因此只允许简洁的 ASCII slug。
+ * 同时检查重复值，避免后生成的文章静默覆盖已有静态页。
+ */
+function validateArticleIds(articles) {
+  const seenIds = new Set();
+
+  articles.forEach((article, index) => {
+    const id = article && article.id;
+
+    if (typeof id !== 'string') {
+      throw new Error(`第 ${index + 1} 篇文章的 id 必须是字符串`);
+    }
+
+    if (
+      id.length === 0 ||
+      id.length > MAX_ARTICLE_ID_LENGTH ||
+      !ARTICLE_ID_PATTERN.test(id)
+    ) {
+      throw new Error(
+        `非法文章 ID：${JSON.stringify(id)}。` +
+        `仅允许小写字母、数字和单个连字符分隔，长度不得超过 ${MAX_ARTICLE_ID_LENGTH} 个字符`
+      );
+    }
+
+    if (seenIds.has(id)) {
+      throw new Error(`重复文章 ID：${id}`);
+    }
+
+    seenIds.add(id);
+  });
+}
+
+/** 将文章 ID 转换为输出路径，并做目录边界二次检查。 */
+function resolveArticleOutputFile(articleId) {
+  const file = path.resolve(OUT_DIR, `${articleId}.html`);
+
+  if (path.dirname(file) !== OUT_DIR) {
+    throw new Error(`文章输出路径越界：${articleId}`);
+  }
+
+  return file;
+}
+
 /** 渲染单篇文章的静态页 */
 function buildPage(article) {
-  const url = `${SITE}/articles/${article.id}.html`;
+  const encodedId = encodeURIComponent(article.id);
+  const url = `${SITE}/articles/${encodedId}.html`;
   const image = `${SITE}${COVER_IMAGE}`;
   const rawBody = marked.parse(article.content);
   const body = sanitizeHtml(rawBody, {
@@ -260,6 +307,8 @@ ${body}
 
 // ---------- 主流程 ----------
 function main() {
+  validateArticleIds(ARTICLES);
+
   const targets = ONLY_ID ? ARTICLES.filter(a => a.id === ONLY_ID) : ARTICLES;
 
   if (targets.length === 0) {
@@ -272,10 +321,11 @@ function main() {
 
   const report = [];
   for (const article of targets) {
-    const file = path.join(OUT_DIR, `${article.id}.html`);
+    const file = resolveArticleOutputFile(article.id);
     fs.writeFileSync(file, buildPage(article), 'utf8');
     const size = fs.statSync(file).size;
-    report.push(`OK  ${article.id}.html  (${(size / 1024).toFixed(1)} KB)  -> ${SITE}/articles/${article.id}.html`);
+    const encodedId = encodeURIComponent(article.id);
+    report.push(`OK  ${article.id}.html  (${(size / 1024).toFixed(1)} KB)  -> ${SITE}/articles/${encodedId}.html`);
   }
 
   report.push('');
@@ -287,4 +337,13 @@ function main() {
   console.log(report.join('\n'));
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  ARTICLE_ID_PATTERN,
+  MAX_ARTICLE_ID_LENGTH,
+  validateArticleIds,
+  resolveArticleOutputFile
+};
