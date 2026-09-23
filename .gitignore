@@ -5,5 +5,10 @@ scripts/
 *.remote
 *.tmp
 *.log
+_build*.txt
+_probe*.txt
+_env_check.txt
+_pip.txt
+_cover.txt
 .DS_Store
 Thumbs.db
