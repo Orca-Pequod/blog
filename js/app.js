@@ -38,6 +38,55 @@ function navigate(path) {
     document.getElementById('navToggle').classList.remove('active');
 }
 
+// ===== 分享链接 =====
+// 静态分享页 URL（.../articles/<id>.html）——该地址含独立 og 标签，
+// 转发到微信等平台才能显示标题、摘要与封面；hash 路由地址无法被爬虫读取。
+function getShareUrl(articleId) {
+    const base = window.location.origin +
+        window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '');
+    return `${base}/articles/${articleId}.html`;
+}
+
+// 复制分享链接，按钮短暂显示"已复制"
+async function copyShareLink(articleId, btn) {
+    const url = getShareUrl(articleId);
+    let ok = false;
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(url);
+            ok = true;
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+    } catch (e) {
+        ok = false;
+    }
+
+    if (!ok) {
+        window.prompt('复制下方链接后粘贴到微信即可分享：', url);
+        return;
+    }
+
+    if (btn) {
+        const old = btn.dataset.text || btn.innerText;
+        btn.dataset.text = old;
+        btn.classList.add('copied');
+        btn.innerText = '已复制';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerText = old;
+        }, 1800);
+    }
+}
+
 // 跳转到专业领域页的指定板块（供页脚"专业领域"链接使用）
 function goPracticeSection(id) {
     const onPractice = getRoute() === '/practice';
@@ -216,6 +265,11 @@ function renderArticle(articleId) {
             </div>
             <div class="article-body">
                 ${renderedContent}
+            </div>
+            <div class="share-bar">
+                <span class="share-label">分享本文</span>
+                <button type="button" class="btn-share" onclick="copyShareLink('${article.id}', this)">复制分享链接</button>
+                <span class="share-hint">粘贴到微信对话框或朋友圈，对方即可看到标题、摘要与封面</span>
             </div>
             <div style="margin-top: 48px; padding: 24px 32px; background: var(--bg-card); border-radius: var(--radius); border-left: 4px solid var(--gold); box-shadow: var(--shadow);">
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">本文作者</p>
