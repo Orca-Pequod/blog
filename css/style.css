@@ -705,6 +705,55 @@ img {
     color: var(--gold-light);
 }
 
+/* ===== 分享条（文章详情页） ===== */
+.share-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.share-bar .share-label {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--navy);
+}
+
+.share-bar .share-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.btn-share {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    color: var(--navy);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-share:hover {
+    background: var(--navy);
+    color: #fff;
+}
+
+.btn-share.copied {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy-dark);
+}
+
 /* ===== 专业领域页 ===== */
 .practice-page {
     max-width: 860px;
