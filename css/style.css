@@ -754,6 +754,60 @@ img {
     color: var(--navy-dark);
 }
 
+.share-steps-toggle {
+    margin-left: auto;
+    padding: 0 0 2px;
+    background: none;
+    border: none;
+    border-bottom: 1px dashed var(--gold-dark);
+    color: var(--gold-dark);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.share-steps-toggle:hover {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+}
+
+.share-steps {
+    margin-top: 10px;
+    padding: 18px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+.share-steps[hidden] {
+    display: none;
+}
+
+.share-steps ol {
+    margin: 0 0 10px;
+    padding-left: 20px;
+}
+
+.share-steps li {
+    margin-bottom: 2px;
+}
+
+.share-steps strong {
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.share-steps p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
 /* ===== 专业领域页 ===== */
 .practice-page {
     max-width: 860px;

@@ -25,7 +25,8 @@ const ARTICLES = require(path.join(__dirname, '..', 'data', 'articles.js'));
 const BASE = path.resolve(__dirname, '..');
 const OUT_DIR = path.join(BASE, 'articles');
 const DEFAULT_SITE = 'https://orca-pequod.github.io/blog';
-const COVER_IMAGE = '/images/og-cover.png';
+// 正方形封面：微信对话框/朋友圈缩略图均为 1:1 居中裁剪，方图可零损失显示
+const COVER_IMAGE = '/images/og-cover-square.png';
 
 // ---------- 参数解析 ----------
 const args = process.argv.slice(2);
@@ -79,7 +80,7 @@ function buildPage(article) {
     <meta property="og:description" content="${esc(article.summary)}">
     <meta property="og:image" content="${esc(image)}">
     <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:height" content="1200">
     <meta property="og:image:alt" content="陈思杰律师 | 专注劳动争议、知识产权、人工智能法律">
     <meta property="og:url" content="${esc(url)}">
     <meta property="og:locale" content="zh_CN">
@@ -88,7 +89,7 @@ function buildPage(article) {
     ${(article.tags || []).map(t => `<meta property="article:tag" content="${esc(t)}">`).join('\n    ')}
 
     <!-- 其他平台卡片（兼容非微信场景） -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="${esc(article.title)}">
     <meta name="twitter:description" content="${esc(article.summary)}">
     <meta name="twitter:image" content="${esc(image)}">
@@ -130,7 +131,17 @@ ${body}
             <div class="share-bar">
                 <span class="share-label">分享本文</span>
                 <button type="button" class="btn-share" onclick="copyShareLink(this)">复制分享链接</button>
-                <span class="share-hint">粘贴到微信对话框或朋友圈，对方即可看到标题、摘要与封面</span>
+                <span class="share-hint">微信内直接从「收藏」转发才会显示图文卡片</span>
+                <button type="button" class="share-steps-toggle" onclick="toggleShareSteps(this)">查看步骤</button>
+            </div>
+            <div class="share-steps" hidden>
+                <ol>
+                    <li>把链接发到微信任意对话框（此时只显示为纯文本）</li>
+                    <li>在微信里<strong>点开</strong>这条链接</li>
+                    <li>点右上角「···」→「收藏」</li>
+                    <li>返回微信 →「我」→「收藏」→ 长按该条目 → 转发给朋友或分享到朋友圈</li>
+                </ol>
+                <p>这样转发出去，就是带标题、摘要与封面图的卡片。</p>
             </div>
             <div style="margin-top: 48px; padding: 24px 32px; background: var(--bg-card); border-radius: var(--radius); border-left: 4px solid var(--gold); box-shadow: var(--shadow);">
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">本文作者</p>
@@ -182,6 +193,19 @@ ${body}
 
     <script>
     // 复制本页的规范链接（canonical），保证粘贴出去的一定是带 og 标签的静态地址
+    function toggleShareSteps(btn) {
+        var bar = btn.closest('.share-bar');
+        var panel = bar && bar.nextElementSibling;
+        if (!panel || !panel.classList.contains('share-steps')) return;
+        if (panel.hasAttribute('hidden')) {
+            panel.removeAttribute('hidden');
+            btn.textContent = '收起步骤';
+        } else {
+            panel.setAttribute('hidden', '');
+            btn.textContent = '查看步骤';
+        }
+    }
+
     function copyShareLink(btn) {
         var link = document.querySelector('link[rel="canonical"]');
         var url = link ? link.href : location.href;
@@ -198,7 +222,7 @@ ${body}
         };
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(url).then(done, function () {
-                window.prompt('复制下方链接后粘贴到微信即可分享：', url);
+                window.prompt('复制下方链接：', url);
             });
             return;
         }
@@ -210,9 +234,9 @@ ${body}
         document.body.appendChild(ta);
         ta.select();
         try {
-            document.execCommand('copy') ? done() : window.prompt('复制下方链接后粘贴到微信即可分享：', url);
+            document.execCommand('copy') ? done() : window.prompt('复制下方链接：', url);
         } catch (e) {
-            window.prompt('复制下方链接后粘贴到微信即可分享：', url);
+            window.prompt('复制下方链接：', url);
         }
         document.body.removeChild(ta);
     }
