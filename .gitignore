@@ -2,6 +2,7 @@
 scripts/
 
 # 临时/中间文件
+node_modules/
 *.remote
 *.tmp
 *.log

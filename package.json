@@ -1,0 +1,11 @@
+{
+  "name": "orca-pequod-blog",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:share-pages": "node tools/build_share_pages.js"
+  },
+  "dependencies": {
+    "sanitize-html": "2.17.7"
+  }
+}
