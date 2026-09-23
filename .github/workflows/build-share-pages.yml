@@ -1,87 +1,42 @@
-name: 生成静态分享页
-
-# 作用：文章数据（data/articles.js）变动时，自动生成 articles/<id>.html，
-#       保证每篇文章都有带 og 标签的静态页，微信转发才有卡片预览。
-#
-# 为什么不在 push master 时直接提交：
-#   仓库对 master 启用了分支保护（要求 CodeQL 检查通过），直接推送会被拒绝。
-#   因此改为：PR 阶段自动补齐静态页（提交回 PR 分支）；
-#             master 兜底场景则自动开一个修复 PR，由仓库主人合并。
+name: Verify static share pages
 
 on:
   pull_request:
-    branches: [master]
-  push:
-    branches: [master]
-  workflow_dispatch:
+    branches:
+      - master
 
 permissions:
-  contents: write
-  pull-requests: write
-
-concurrency:
-  group: share-pages-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  build:
+  verify:
+    name: Verify share pages
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - name: Check out proposed changes
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # pull_request 事件默认检出的是合并后的临时 ref，需显式检出 PR 源分支才能推回提交
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
-          fetch-depth: 1
+          persist-credentials: false
 
-      - name: 配置 Node
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: "24"
 
-      - name: 生成静态分享页
+      - name: Regenerate static share pages
         run: node tools/build_share_pages.js
 
-      - name: 检查是否产生变更
-        id: diff
+      - name: Check generated pages
+        shell: bash
         run: |
-          if [ -n "$(git status --porcelain articles)" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "以下文件需要更新："
-            git status --porcelain articles
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "静态分享页已是最新，无需变更。"
+          set -euo pipefail
+
+          if [[ -n "$(git status --porcelain -- articles/)" ]]; then
+            echo "::error::静态分享页没有同步。请运行 node tools/build_share_pages.js，并提交 articles/ 目录中的变化。"
+            git status --short -- articles/
+            exit 1
           fi
 
-      # ---- 场景一：PR 阶段，把生成的静态页提交回 PR 源分支 ----
-      # master 的保护规则只作用于 master，推 PR 分支不受限制。
-      # 提交后会再次触发本工作流，此时 diff 为空即停止，不会无限循环。
-      - name: 提交回 PR 分支
-        if: steps.diff.outputs.changed == 'true' && github.event_name == 'pull_request'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add articles
-          git commit -m "自动生成静态分享页"
-          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
-
-      # ---- 场景二：master 兜底（例如合并后发现静态页缺失），自动开一个修复 PR ----
-      - name: 创建修复 PR
-        if: steps.diff.outputs.changed == 'true' && github.event_name != 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="auto/share-pages-$(date +%Y%m%d-%H%M%S)"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
-          git add articles
-          git commit -m "自动生成静态分享页"
-          git push origin "$BRANCH"
-          gh pr create \
-            --base master \
-            --head "$BRANCH" \
-            --title "自动生成静态分享页" \
-            --body "检测到 data/articles.js 有变动，但 master 上的静态分享页未同步。本 PR 由工作流自动生成，补齐 articles/ 下的静态分享页，确保文章转发到微信时能显示标题、摘要与封面。"
+          echo "静态分享页已经同步。"
