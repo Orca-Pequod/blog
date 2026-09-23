@@ -47,6 +47,20 @@ function getShareUrl(articleId) {
     return `${base}/articles/${articleId}.html`;
 }
 
+// 展开/收起微信分享步骤说明
+function toggleShareSteps(btn) {
+    const bar = btn.closest('.share-bar');
+    const panel = bar && bar.nextElementSibling;
+    if (!panel || !panel.classList.contains('share-steps')) return;
+    if (panel.hasAttribute('hidden')) {
+        panel.removeAttribute('hidden');
+        btn.textContent = '收起步骤';
+    } else {
+        panel.setAttribute('hidden', '');
+        btn.textContent = '查看步骤';
+    }
+}
+
 // 复制分享链接，按钮短暂显示"已复制"
 async function copyShareLink(articleId, btn) {
     const url = getShareUrl(articleId);
@@ -71,7 +85,7 @@ async function copyShareLink(articleId, btn) {
     }
 
     if (!ok) {
-        window.prompt('复制下方链接后粘贴到微信即可分享：', url);
+        window.prompt('复制下方链接：', url);
         return;
     }
 
@@ -269,7 +283,17 @@ function renderArticle(articleId) {
             <div class="share-bar">
                 <span class="share-label">分享本文</span>
                 <button type="button" class="btn-share" onclick="copyShareLink('${article.id}', this)">复制分享链接</button>
-                <span class="share-hint">粘贴到微信对话框或朋友圈，对方即可看到标题、摘要与封面</span>
+                <span class="share-hint">微信内直接从「收藏」转发才会显示图文卡片</span>
+                <button type="button" class="share-steps-toggle" onclick="toggleShareSteps(this)">查看步骤</button>
+            </div>
+            <div class="share-steps" hidden>
+                <ol>
+                    <li>把链接发到微信任意对话框（此时只显示为纯文本）</li>
+                    <li>在微信里<strong>点开</strong>这条链接</li>
+                    <li>点右上角「···」→「收藏」</li>
+                    <li>返回微信 →「我」→「收藏」→ 长按该条目 → 转发给朋友或分享到朋友圈</li>
+                </ol>
+                <p>这样转发出去，就是带标题、摘要与封面图的卡片。</p>
             </div>
             <div style="margin-top: 48px; padding: 24px 32px; background: var(--bg-card); border-radius: var(--radius); border-left: 4px solid var(--gold); box-shadow: var(--shadow);">
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">本文作者</p>
